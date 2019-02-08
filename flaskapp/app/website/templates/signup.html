@@ -1,0 +1,209 @@
+{% block body %}
+{% if session['logged_in'] %}
+ 
+You're logged in already!
+ 
+{% else %}
+ <style>
+
+* {
+box-sizing: border-box;
+}
+ 
+*:focus {
+outline: none;
+}
+body {
+font-family: Arial;
+background-color: #3498DB;
+padding: 50px;
+}
+.signup {
+margin: 20px auto;
+width: 300px;
+}
+.signup-screen {
+background-color: #FFF;
+padding: 20px;
+border-radius: 5px
+}
+ 
+.app-title {
+text-align: center;
+color: #777;
+}
+ 
+.signup-form {
+text-align: center;
+}
+.control-group {
+margin-bottom: 10px;
+}
+ 
+input {
+text-align: center;
+background-color: #ECF0F1;
+border: 2px solid transparent;
+border-radius: 3px;
+font-size: 16px;
+font-weight: 200;
+padding: 10px 0;
+width: 250px;
+transition: border .5s;
+}
+ 
+input:focus {
+border: 2px solid #3498DB;
+box-shadow: none;
+}
+ 
+.btn {
+border: 2px solid transparent;
+background: #3498DB;
+color: #ffffff;
+font-size: 16px;
+line-height: 25px;
+padding: 10px 0;
+text-decoration: none;
+text-shadow: none;
+border-radius: 3px;
+box-shadow: none;
+transition: 0.25s;
+display: block;
+width: 250px;
+margin: 0 auto;
+}
+ 
+.btn:hover {
+background-color: #2980B9;
+}
+ 
+signup-link {
+font-size: 12px;
+color: #444;
+display: block;
+margin-top: 12px;
+}
+
+/* The message box is shown when the user clicks on the password field */
+#message {
+  display:none;
+  background: #f1f1f1;
+  color: #000;
+  position: relative;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+#message p {
+  padding: 10px 35px;
+  font-size: 18px;
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+  color: green;
+}
+
+.valid:before {
+  position: relative;
+  left: -35px;
+  content: "✔";
+}
+
+/* Add a red text color and an "x" when the requirements are wrong */
+.invalid {
+  color: red;
+}
+
+.invalid:before {
+  position: relative;
+  left: -35px;
+  content: "✖";
+}
+
+</style>
+<form action="signup" method="POST">
+<div class="signup">
+<div class="signup-screen">
+<div class="app-title">
+<h1>Sign Up</h1>
+</div>
+<div class="signup-form">
+<div class="control-group">
+		<input type="text" class=signup-field" value="" placeholder="email" name="email" pattern="[a-z0-9._%+-]+@pathologicireland.[a-z]{2,}$" required>
+<label class="signup-field-icon fui-user" for=signup-name"></label></div>
+<div class="control-group">
+        <input type="text" class=signup-field" value="" placeholder="username" name="username" required>
+<label class="signup-field-icon fui-user" for=signup-name"></label></div>
+<div class="control-group">
+        <input type="password" class=signup-field" value="" placeholder="password" name="password" id="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
+<label class="signup-field-icon fui-user" for=signup-name"></label></div>
+
+<input type="submit" value="Sign Up" class="btn btn-primary btn-large btn-block">
+
+<script>
+var myInput = document.getElementById("password");
+var letter = document.getElementById("letter");
+var capital = document.getElementById("capital");
+var number = document.getElementById("number");
+var length = document.getElementById("length");
+
+// When the user clicks on the password field, show the message box
+myInput.onfocus = function() {
+  document.getElementById("message").style.display = "block";
+}
+
+// When the user clicks outside of the password field, hide the message box
+myInput.onblur = function() {
+  document.getElementById("message").style.display = "none";
+}
+
+// When the user starts to type something inside the password field
+myInput.onkeyup = function() {
+  // Validate lowercase letters
+  var lowerCaseLetters = /[a-z]/g;
+  if(myInput.value.match(lowerCaseLetters)) {  
+    letter.classList.remove("invalid");
+    letter.classList.add("valid");
+  } else {
+    letter.classList.remove("valid");
+    letter.classList.add("invalid");
+  }
+  
+  // Validate capital letters
+  var upperCaseLetters = /[A-Z]/g;
+  if(myInput.value.match(upperCaseLetters)) {  
+    capital.classList.remove("invalid");
+    capital.classList.add("valid");
+  } else {
+    capital.classList.remove("valid");
+    capital.classList.add("invalid");
+  }
+
+  // Validate numbers
+  var numbers = /[0-9]/g;
+  if(myInput.value.match(numbers)) {  
+    number.classList.remove("invalid");
+    number.classList.add("valid");
+  } else {
+    number.classList.remove("valid");
+    number.classList.add("invalid");
+  }
+  
+  // Validate length
+  if(myInput.value.length >= 8) {
+    length.classList.remove("invalid");
+    length.classList.add("valid");
+  } else {
+    length.classList.remove("valid");
+    length.classList.add("invalid");
+  }
+}
+</script>
+ 
+</div>
+</div>
+</div>
+</form>{% endif %}
+{% endblock %}

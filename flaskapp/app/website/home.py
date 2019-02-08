@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template
+from flask import Flask, flash, request, redirect, url_for, render_template, session, abort
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'upload'
@@ -9,8 +9,28 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
+def login():
+	if not session.get('logged_in'):
+		return render_template('login.html')
+	#else:
+    	#return render_template('home.html')
+
+@app.route('/home/')
 def home():
-    return render_template('home.html')
+	return render_template('home.html')
+
+@app.route("/logout/")
+def logout():
+	session['logged_in'] = False
+	return login()
+
+@app.route('/login', methods=['POST'])
+def do_admin_login():
+	if request.form['password'] == '123' and request.form['username'] == 'admin':
+		session['logged_in'] = True
+	else:
+	   flash('wrong password!')
+	return render_template('home.html')
 
 @app.route('/predict/')
 def predict():
@@ -41,6 +61,9 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return render_template('results.html')
-    return render_template('predict.html')
+            
+    elif request.method == 'GET':
+    	return render_template('predict.html')
 if __name__ == '__main__':
-    app.run(debug=True)
+	app.secret_key = os.urandom(12)
+app.run(debug=True)
