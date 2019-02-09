@@ -1,6 +1,12 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, session, abort
+from flask import Flask, flash, request, redirect, url_for, render_template, session, abort, logging
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
+
+engine = create_engine("mysql+pymysql://root:12@mbionG@localhost/register")
+db=scoped_session(sessionmaker(bind=engine))
 
 UPLOAD_FOLDER = 'upload'
 ALLOWED_EXTENSIONS = set(['txt', 'csv'])
@@ -9,28 +15,45 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
-def login():
-	if not session.get('logged_in'):
-		return render_template('login.html')
-	#else:
-    	#return render_template('home.html')
-
-@app.route('/home/')
 def home():
-	return render_template('home.html')
+	return render_template("main.html")
 
-@app.route("/logout/")
-def logout():
-	session['logged_in'] = False
-	return login()
+@app.route('/main', methods=['GET', 'POST'])
+def main():
+    if request.method == 'POST':
+        return render_template('login.html')
+            
+    elif request.method == 'GET':
+        return render_template('main.html')
 
-@app.route('/login', methods=['POST'])
-def do_admin_login():
-	if request.form['password'] == '123' and request.form['username'] == 'admin':
-		session['logged_in'] = True
-	else:
-	   flash('wrong password!')
-	return render_template('home.html')
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        email = request.form.get("email")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm = request.form.get("confirm")
+        secure_password = sha256_crypt.encrypt(str(password))
+
+        if password == confirm:
+            db.execute("INSERT INTO users(email,username,password) VALUES (:email, :username, :password)",
+                {"email":email, "username":username,"password":secure_password})
+            db.commit()
+            return redirect(url_for('login'))
+        else:
+            flash("password must match")
+            return render_template("signup.html")
+
+    return render_template('signup.html')
+
+#@app.route("/logout/")
+#def logout():
+#	session['logged_in'] = False
+#	return login()
+
+@app.route('/login')
+def login():
+	return render_template('login.html')
 
 @app.route('/predict/')
 def predict():
@@ -65,5 +88,4 @@ def upload_file():
     elif request.method == 'GET':
     	return render_template('predict.html')
 if __name__ == '__main__':
-	app.secret_key = os.urandom(12)
-app.run(debug=True)
+    app.run(debug=True)

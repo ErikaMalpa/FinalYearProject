@@ -1,9 +1,4 @@
 {% block body %}
-{% if session['logged_in'] %}
- 
-You're logged in already!
- 
-{% else %}
  <style>
 
 * {
@@ -129,6 +124,7 @@ margin-top: 12px;
 <div class="app-title">
 <h1>Sign Up</h1>
 </div>
+<form action"" method "POST">
 <div class="signup-form">
 <div class="control-group">
 		<input type="text" class=signup-field" value="" placeholder="email" name="email" pattern="[a-z0-9._%+-]+@pathologicireland.[a-z]{2,}$" required>
@@ -139,8 +135,12 @@ margin-top: 12px;
 <div class="control-group">
         <input type="password" class=signup-field" value="" placeholder="password" name="password" id="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
 <label class="signup-field-icon fui-user" for=signup-name"></label></div>
+<div class="control-group">
+        <input type="password" class=signup-field" value="" placeholder="confirm" name="password" id="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
+<label class="signup-field-icon fui-user" for=signup-name"></label></div>
 
 <input type="submit" value="Sign Up" class="btn btn-primary btn-large btn-block">
+</div>
 
 <script>
 var myInput = document.getElementById("password");
@@ -205,5 +205,5 @@ myInput.onkeyup = function() {
 </div>
 </div>
 </div>
-</form>{% endif %}
+</form>
 {% endblock %}
