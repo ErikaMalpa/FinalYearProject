@@ -1,3 +1,4 @@
+
 {% block body %}
 <style>
  .btn {
@@ -58,17 +59,14 @@ color: #777;
 	</div>
             <p class="lead"></p>
             <div class="control-group">
-			<a href="http://127.0.0.1:5000/login"><input type="submit" value="Log in" class="btn btn-primary btn-large btn-block"></a>
+			<a href="{{ url_for('login') }}"><input type="submit" value="Log in" class="btn btn-primary btn-large btn-block"></a>
 			<label class="login-field-icon fui-lock" for="login-pass"></label></div>
 			<div class="control-group">
-			<a href="http://127.0.0.1:5000/signup"><input type="submit" value="Sign up" class="btn btn-primary btn-large btn-block"></a>
+			<a href="{{ url_for('signup') }}"><input type="submit" value="Sign up" class="btn btn-primary btn-large btn-block"></a>
 			<label class="login-field-icon fui-lock" for="login-pass"></label></div>
-
-
         </div>
  
     </div>
 </body>
- 
-</html>
+ </html>
 {% endblock %}
