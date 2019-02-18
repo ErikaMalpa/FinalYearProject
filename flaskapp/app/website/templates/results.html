@@ -1,28 +1,21 @@
 {% extends "layout.html" %}
+{% if session.log  %}
 {% block content %}
-   <div class="results">
+   <div class="container">
      <h1>Results</h1>
-     <h3>High possibility of Liver cancer</h3>
      <button type="button">Download Results</button>
-   </div>
-   <h4> Breast </h4>
-   <p>DNN = A possibility of 6%</p>
-   <p>KNN = A possibility of 5%</p>
-   <p>OVR = A possibility of 4%</p>
-   <h4> Kidney </h4>
-   <p>DNN = A possibility of 4%</p>
-   <p>KNN = A possibility of 10%</p>
-   <p>OVR = A possibility of 5%</p>
-   <h4> Colon </h4>
-   <p>DNN = A possibility of 12%</p>
-   <p>KNN = A possibility of 18%</p>
-   <p>OVR = A possibility of 10%</p>
-   <h4> Liver </h4>
-   <p>DNN = A possibility of 80%</p>
-   <p>KNN = A possibility of 70%</p>
-   <p>OVR = A possibility of 80%</p>
-   <h4> Prostate </h4>
-   <p>DNN = A possibility of 1%</p>
-   <p>KNN = A possibility of 2%</p>
-   <p>OVR = A possibility of 2%</p>
+    <!-- <table border = 1>
+       {% for key, value in predict.items() %}
+          <tr>
+             <th> {{ key }} </th>
+             <td> {{ value }} </td>
+          </tr>
+       {% endfor %}
+    </table> -->
+    
+    {% for key, value in predict.items() %}
+             <th> {{ key }} </th>
+             <td> {{ value }} </td>
+    {% endfor %}
+     </div>
  {% endblock %}

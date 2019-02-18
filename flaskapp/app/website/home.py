@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, session, abort, logging
+from flask import Flask, flash, request, redirect, url_for, render_template, session, abort, logging,  Response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from passlib.hash import sha256_crypt
@@ -43,6 +43,7 @@ def signup():
 
 @app.route("/logout")
 def logout():
+    session["log"] = False
     session.clear()
     flash("You are now logged out")
     return redirect(url_for('home'))
@@ -82,7 +83,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/predict/', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
@@ -98,7 +99,9 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return render_template('results.html')
+            predict = request.form
+            #session["predict"] = True
+            return render_template('results.html',predict= predict)
             
     elif request.method == 'GET':
     	return render_template('predict.html')
