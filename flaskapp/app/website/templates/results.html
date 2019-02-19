@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
-{% if session.log  %}
+
 {% block content %}
+{% if session.log  %}
    <div class="container">
      <h1>Results</h1>
-     <button type="button">Download Results</button>
     <!-- <table border = 1>
        {% for key, value in predict.items() %}
           <tr>
@@ -12,10 +12,19 @@
           </tr>
        {% endfor %}
     </table> -->
-    
+    <p>
     {% for key, value in predict.items() %}
-             <th> {{ key }} </th>
-             <td> {{ value }} </td>
+             <th> {{ key }} :</th> 
+             <td> {{ value }} </td><br/>
     {% endfor %}
-     </div>
+    </p>
+
+    <form action = "http://127.0.0.1:5000/predict" method = "GET" enctype = "multipart/form-data">
+    <button type="button">Download Results</button>
+    </form>
+
+    </div>
+{% else  %}
+<h1>You must log in</h1>
+{% endif  %}
  {% endblock %}

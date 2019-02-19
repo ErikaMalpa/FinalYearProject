@@ -16,7 +16,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def home():
-	return render_template("main.html")
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        return render_template("main.html")
 
 @app.route('/main')
 def main():
@@ -43,7 +46,7 @@ def signup():
 
 @app.route("/logout")
 def logout():
-    session["log"] = False
+    #session["log"] = False
     session.clear()
     flash("You are now logged out")
     return redirect(url_for('home'))
@@ -63,7 +66,7 @@ def login():
         else:
             for password_data in passwordata:
                 if sha256_crypt.verify(password,password_data):
-                    session["log"] = True
+                    session['log'] = True
                     flash(u"You are logged in","success")
                     return redirect(url_for("main"))
                 else:
@@ -73,11 +76,17 @@ def login():
 
 @app.route('/predict/')
 def predict():
-    return render_template('predict.html')
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        return render_template('predict.html')
 
-@app.route('/results/')
+@app.route('/results/', methods=['GET', 'POST'])
 def results():
-    return render_template('results.html')
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        return render_template('results.html')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -85,26 +94,41 @@ def allowed_file(filename):
 
 @app.route('/predict', methods=['GET', 'POST'])
 def upload_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            predict = request.form
-            #session["predict"] = True
-            return render_template('results.html',predict= predict)
-            
-    elif request.method == 'GET':
-    	return render_template('predict.html')
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        if request.method == 'POST':
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                predict = request.form
+                #with open('upload/file1.txt', 'w') as f: 
+                 #   f.write(predict)
+                #session["predict"] = True
+                return render_template('results.html',predict= predict)
+                
+        elif request.method == 'GET':
+        	return render_template('predict.html')
+
+#def download():
+ #   file = open('khan_train.csv','r')
+  #  returnfile = file.read().encode('latin-1')
+   # file.close()
+    #return Response(returnfile,
+     #   mimetype="text/csv",
+      #  headers={"Content-disposition":
+       #          "attachment; filename=khan_train.csv"})
+
 if __name__ == '__main__':
     app.secret_key="this0is1a2pass3word4"
     app.run(debug=True)
