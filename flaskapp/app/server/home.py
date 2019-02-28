@@ -19,6 +19,8 @@ import tensorflow as tf
 from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 import pylab as pl
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.svm import LinearSVC
 #####
 engine = create_engine("mysql+pymysql://root:12ambionG@localhost/signup")
 db=scoped_session(sessionmaker(bind=engine))
@@ -245,11 +247,111 @@ def upload_file():
                 df2 = np.asarray(df2)
                 df2 = clf.predict(df2)
                 ####
+
+                ####
+                # patientID = request.form.get("patientID")
+                # clinicAddress = request.form.get("clinicAddress")
+
+                # patiedIDdata = db.execute("SELECT patientID FROM patientInformation WHERE username=:username",{"username":username}).fetchone()
+                # clinicAddressdata = db.execute("SELECT clinicAddress FROM patientInformation WHERE username=:username",{"username":username}).fetchone()
+                ####
+
+                ####
+
+                ####
                 return render_template('results.html',predict= predict,df2=df2)
                 
         elif request.method == 'GET':
             return render_template('predict.html')
 
+@app.route('/predictOVR/')
+def predictOVR():
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        return render_template('predictOVR.html')
+
+@app.route('/predictOVR', methods=['GET', 'POST'])
+def upload_file2():
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        if request.method == 'POST':
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                predict = request.form
+                #with open('upload/file1.txt', 'w') as f: 
+                 #   f.write(predict)
+                #session["predict"] = True
+
+                ###
+                #read data
+                df = pd.read_csv('./upload/joinedData.csv', sep=r'\s*(?:\||\#|\,)\s*',
+                     engine='python')
+
+                #change the 5 tumour types to numbers
+                Class = {'LUAD': 0,'BRCA': 1,'KIRC': 2,'PRAD': 3,'COAD': 4} 
+
+                #this is where we add the class to the table
+                df.Class = [Class[item] for item in df.Class]
+
+                #drop the 2 unnamed table because we do not need them
+                df = df.drop('Unnamed: 0',1)
+                df = df.drop('Unnamed: 0.1',1)
+
+                #Split the X and y
+                X = df.drop('Class', axis=1).values
+                y = df['Class'].values
+                y = np.asarray(y)
+
+                #Standarize using min and max
+                X = (X - X.mean()) / (X.max() - X.min())
+
+                #Split the data set with 80 to traina dn20 to test
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)  
+
+                #using k=n^(1/2) where n = columns, therefore it's 143.2 
+                
+                clf5 = OneVsRestClassifier(LinearSVC(random_state=0)).fit(X_train, y_train)
+                lrTest = clf5.predict(X_test)
+
+                # df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',
+                #      engine='python')
+                # df2 = np.asarray(df2)
+
+                # df2 = clf.predict(df2)
+                df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',engine='python')
+                df2 = df2.drop('Unnamed: 0', axis=1).values
+                df2 = np.asarray(df2)
+                df2 = clf5.predict(df2)
+                ####
+
+                ####
+                # patientID = request.form.get("patientID")
+                # clinicAddress = request.form.get("clinicAddress")
+
+                # patiedIDdata = db.execute("SELECT patientID FROM patientInformation WHERE username=:username",{"username":username}).fetchone()
+                # clinicAddressdata = db.execute("SELECT clinicAddress FROM patientInformation WHERE username=:username",{"username":username}).fetchone()
+                ####
+
+                ####
+
+                ####
+                return render_template('results.html',predict= predict,df2=df2)
+                
+        elif request.method == 'GET':
+            return render_template('predictOVR.html')
 
 #def download():
  #   file = open('khan_train.csv','r')

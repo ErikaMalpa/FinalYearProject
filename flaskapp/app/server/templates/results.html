@@ -12,21 +12,22 @@
           </tr>
        {% endfor %}
     </table> -->
+    <form action = "http://127.0.0.1:5000/results" method = "GET" enctype = "multipart/form-data">
     <p>
     {% for key, value in predict.items() %}
              <th> {{ key }} :</th> 
              <td> {{ value }} </td><br/>
     {% endfor %}
 
-    {% for value in df2 %}
+    {% for res in df2 %}
              <th> The result is :</th> 
-             <td> {{ value }} </td><br/>
+             <td> {{ res }} </td><br/>
     {% endfor %}
 
     <p>'Lung': 0,'Breast': 1,'Kidney': 2,'Prostate': 3,'Colon': 4 </p>
     </p>
-    <form action = "http://127.0.0.1:5000/predict" method = "GET" enctype = "multipart/form-data">
-    <button type="button">Download Results</button>
+     <a href="return-file" target="blank"><button class='btn btn-default'>Download Result</button></a>
+     <a href="return-file" target="blank"><button class='btn btn-default'>Send email</button></a>
     </form>
 
     </div>
