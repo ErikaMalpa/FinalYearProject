@@ -4,6 +4,22 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
+
+#####
+from sklearn.decomposition import PCA
+import csv
+import random
+import math
+import operator
+import pandas as pd  
+import numpy as np
+from sklearn.model_selection import train_test_split
+from matplotlib.colors import ListedColormap
+import tensorflow as tf
+from sklearn.neighbors import KNeighborsClassifier
+import matplotlib.pyplot as plt
+import pylab as pl
+#####
 engine = create_engine("mysql+pymysql://root:12ambionG@localhost/signup")
 db=scoped_session(sessionmaker(bind=engine))
 
@@ -132,7 +148,18 @@ def return_file():
 
 @app.route('/download-file')
 def download_file():
-    return render_template('download.html')
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            Cancer = float(data["Cancer"])
+
+            lin_reg = joblib.load("./linear_regression_model.pkl")
+        except ValueError:
+            return jsonify("Please enter a number.")
+
+        return jsonify(lin_reg.predict(years_of_experience).tolist())
+    #return render_template('download.html')
+
 @app.route('/predict/')
 def predict():
     if not session.get('log'):
@@ -174,10 +201,56 @@ def upload_file():
                 #with open('upload/file1.txt', 'w') as f: 
                  #   f.write(predict)
                 #session["predict"] = True
-                return render_template('results.html',predict= predict)
+
+                ###
+#read data
+                df = pd.read_csv('./upload/joinedData.csv', sep=r'\s*(?:\||\#|\,)\s*',
+                     engine='python')
+
+                #change the 5 tumour types to numbers
+                Class = {'LUAD': 0,'BRCA': 1,'KIRC': 2,'PRAD': 3,'COAD': 4} 
+
+                #this is where we add the class to the table
+                df.Class = [Class[item] for item in df.Class]
+
+                #drop the 2 unnamed table because we do not need them
+                df = df.drop('Unnamed: 0',1)
+                df = df.drop('Unnamed: 0.1',1)
+
+                #Split the X and y
+                X = df.drop('Class', axis=1).values
+                y = df['Class'].values
+                y = np.asarray(y)
+
+                #Standarize using min and max
+                X = (X - X.mean()) / (X.max() - X.min())
+
+                #Split the data set with 80 to traina dn20 to test
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)  
+
+                #using k=n^(1/2) where n = columns, therefore it's 143.2 
+                K = 143
+
+                clf = KNeighborsClassifier(n_neighbors=K, weights='distance')
+
+                clf.fit(X_train, y_train)
+
+                # df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',
+                #      engine='python')
+                # df2 = np.asarray(df2)
+
+                # df2 = clf.predict(df2)
+                df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',engine='python')
+                df2 = df2.drop('Unnamed: 0', axis=1).values
+                df2 = np.asarray(df2)
+                df2 = clf.predict(df2)
+                ####
+                return render_template('results.html',predict= predict,df2=df2)
                 
         elif request.method == 'GET':
-        	return render_template('predict.html')
+            return render_template('predict.html')
+
+
 #def download():
  #   file = open('khan_train.csv','r')
   #  returnfile = file.read().encode('latin-1')
