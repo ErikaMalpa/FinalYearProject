@@ -1,10 +1,11 @@
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template, session, abort, logging,  Response, send_file
+from flask_socketio import SocketIO, send
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
-
+from flask_socketio import SocketIO, emit
 #####
 from sklearn.decomposition import PCA
 import csv
@@ -15,7 +16,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from matplotlib.colors import ListedColormap
-import tensorflow as tf
+##import tensorflow as tf
 from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 import pylab as pl
@@ -29,9 +30,12 @@ UPLOAD_FOLDER = 'upload'
 ALLOWED_EXTENSIONS = set(['txt', 'csv','soft'])
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'donottellanyoneaboutthis'
+#socketio wrapper for the app
+socketio = SocketIO(app,async_mode = 'eventlet')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/')
+@app.route('/home')
 def home():
     if not session.get('log'):
         return redirect(url_for('login'))
@@ -362,6 +366,17 @@ def upload_file2():
       #  headers={"Content-disposition":
        #          "attachment; filename=khan_train.csv"})
 
+@app.route('/')
+def chat():
+    return render_template('chat.html')
+
+#event for broadcasting message to everyone...
+@socketio.on('my event')
+def handle_message(json):
+    print(json)
+    socketio.emit('my response',json)
+
 if __name__ == '__main__':
-    app.secret_key="this0is1a2pass3word4"
-    app.run(debug=True)
+    #app.secret_key="this0is1a2pass3word4"
+    #app.run(debug=True)
+    socketio.run(app,debug = True)
