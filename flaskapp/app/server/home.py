@@ -370,13 +370,16 @@ def upload_file2():
 def chat():
     return render_template('chat.html')
 
+def messageRecived():
+  print( 'message was received!!!' )
+
 #event for broadcasting message to everyone...
 @socketio.on('my event')
-def handle_message(json):
-    print(json)
-    socketio.emit('my response',json)
+def handle_my_custom_event( json ):
+  print( 'recived my event: ' + str( json ) )
+  socketio.emit( 'my response', json, callback=messageRecived )
 
 if __name__ == '__main__':
     #app.secret_key="this0is1a2pass3word4"
     #app.run(debug=True)
-    socketio.run(app,debug = True)
+    socketio.run(app,debug = False, host='0.0.0.0',port=5000)
