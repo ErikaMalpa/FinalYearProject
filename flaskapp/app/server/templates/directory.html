@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% if session.log  %}
+	<div class="container">
+    <h1>Directory of Oncologists</h1>
+    <p> Here are the doctors that are available for consult between 5-8 pm </p>
+	<div class="row text-center">
+      <div class="col-sm-4">
+        <div class="thumbnail">
+          <img src="{{url_for('static', filename='dr3.jpg')}}" alt="Paris" width="400" height="400">
+          <p><strong>Dr. Maria O'connor (Surgical Oncologist)</strong></p>
+          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+          <button class="btn" data-toggle="modal" data-target="#myModal"><a href="http://127.0.0.1:5000/">Chat </a></button>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="thumbnail">
+          <img src="{{url_for('static', filename='dr2.jpg')}}" alt="New York" width="400" height="400">
+          <p><strong>Dr. Katherine Jones (Gynocology Oncologist)</strong></p>
+          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+          <button class="btn" data-toggle="modal" data-target="#myModal"><a href="http://127.0.0.1:5000/">Chat </a></button>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="thumbnail">
+          <img src="{{url_for('static', filename='dr1.jpg')}}" alt="San Francisco" width="400" height="400">
+          <p><strong>Dr. James Murphy (Hema Oncologist)</strong></p>
+          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+          <button class="btn" data-toggle="modal" data-target="#myModal"><a href="http://127.0.0.1:5000/">Chat </a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% else  %}
+<h1>You must log in</h1>
+{% endif  %}
+
+{% endblock %}
+

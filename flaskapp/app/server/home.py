@@ -46,6 +46,10 @@ def home():
 def main():
     return render_template("home.html")
 
+@app.route('/directory')
+def directory():
+    return render_template("directory.html")
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -69,7 +73,6 @@ def signup():
 def logout():
     #session["log"] = False
     session.clear()
-    flash("You are now logged out")
     return redirect(url_for('home'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -368,7 +371,10 @@ def upload_file2():
 
 @app.route('/')
 def chat():
-    return render_template('chat.html')
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        return render_template('chat.html')
 
 def messageRecived():
   print( 'message was received!!!' )
@@ -377,7 +383,7 @@ def messageRecived():
 @socketio.on('my event')
 def handle_my_custom_event( json ):
   print( 'recived my event: ' + str( json ) )
-  socketio.emit( 'my response', json, callback=messageRecived )
+  socketio.emit( 'my response', json, callback=messageRecived)
 
 if __name__ == '__main__':
     #app.secret_key="this0is1a2pass3word4"
