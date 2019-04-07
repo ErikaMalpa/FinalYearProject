@@ -24,6 +24,12 @@
              <td> {{ res }} </td><br/>
     {% endfor %}
 
+    {% if value.age() > 40 %}
+        <th> Because your age is greater than 40 you have a higher chance of cancer</th>
+    {% elif value.age() <= 40 %}
+        <th> To learn more about prostate cancer :</th>
+    {% endif %}
+
     {% if df2 == 3 %}
         <th> To learn more about prostate cancer :</th> </br>
         <a href="https://www.cancer.ie/cancer-information/prostate-cancer/symptoms-and-diagnosis#sthash.9dLysnwC.dpbs">Symptoms and diagnosis of prostate cancer</a></br>

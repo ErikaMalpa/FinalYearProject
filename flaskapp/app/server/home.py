@@ -1,11 +1,14 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, session, abort, logging,  Response, send_file
+from flask import Flask, flash, request, redirect, url_for, render_template, session, abort, logging,  Response, send_file, Blueprint
 from flask_socketio import SocketIO, send
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, SubmitField
+from wtforms.validators import Required
 #####
 from sklearn.decomposition import PCA
 import csv
@@ -369,21 +372,79 @@ def upload_file2():
       #  headers={"Content-disposition":
        #          "attachment; filename=khan_train.csv"})
 
-@app.route('/')
-def chat():
-    if not session.get('log'):
-        return redirect(url_for('login'))
-    else:
-        return render_template('chat.html')
+# @app.route('/')
+# def chat():
+#     if not session.get('log'):
+#         return redirect(url_for('login'))
+#     else:
+#         return render_template('chat.html')
 
+# def messageRecived():
+#   print( 'message was received!!!' )
+
+# #event for broadcasting message to everyone...
+# @socketio.on('my event')
+# def handle_my_custom_event( json ):
+#   print( 'recived my event: ' + str( json ) )
+#   socketio.emit( 'my response', json, callback=messageRecived,room=sid )
+
+#######
+@socketio.on('joined', namespace='/chat')
+def joined(message):
+    """Sent by clients when they enter a room.
+    A status message is broadcast to all people in the room."""
+    room = session.get('room')
+    join_room(room)
+    emit('status', {'msg': session.get('name') + ' has entered the room.'}, room=room)
+
+@socketio.on('left', namespace='/chat')
+def left(message):
+    """Sent by clients when they leave a room.
+    A status message is broadcast to all people in the room."""
+    room = session.get('room')
+    leave_room(room)
+    emit('status', {'msg': session.get('name') + ' has left the room.'}, room=room)
+
+
+@socketio.on('text', namespace='/chat')
+def text(message):
+    """Sent by a client when the user entered a new message.
+    The message is sent to all people in the room."""
+    room = session.get('room')
+    emit('message', {'msg': session.get('name') + ':' + message['msg']}, room=room)
+
+class LoginForm(FlaskForm):
+    """Accepts a nickname and a room."""
+    name = StringField('Name', validators=[Required()])
+    room = StringField('Room', validators=[Required()])
+    submit = SubmitField('Enter Chatroom')
+#########
+
+@app.route('/enter', methods=['GET', 'POST'])
+def index():
+    """Login form to enter a room."""
+    FlaskForm = LoginForm()
+    if FlaskForm.validate_on_submit():
+        session['name'] = FlaskForm.name.data
+        session['room'] = FlaskForm.room.data
+        return redirect(url_for('.chat'))
+    elif request.method == 'GET':
+        FlaskForm.name.data = session.get('name', '')
+        FlaskForm.room.data = session.get('room', '')
+    return render_template('index.html', FlaskForm=FlaskForm)
 def messageRecived():
   print( 'message was received!!!' )
 
 #event for broadcasting message to everyone...
-@socketio.on('my event')
-def handle_my_custom_event( json ):
-  print( 'recived my event: ' + str( json ) )
-  socketio.emit( 'my response', json, callback=messageRecived)
+@app.route('/chat')
+def chat():
+    """Chat room. The user's name and room must be stored in
+    the session."""
+    name = session.get('name', '')
+    room = session.get('room', '')
+    if name == '' or room == '':
+        return redirect(url_for('.index'))
+    return render_template('chat.html', name=name, room=room)
 
 if __name__ == '__main__':
     #app.secret_key="this0is1a2pass3word4"

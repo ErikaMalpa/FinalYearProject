@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block content %}
+	<div class="container">
+    <h1>Directory of Oncologists</h1>
+    <p> Here are the doctors that are available for consult between 5-8 pm </p>
+	<div class="row text-center">
+      <div class="col-sm-4">
+        <div class="thumbnail">
+          <img src="{{url_for('static', filename='dr3.jpg')}}" alt="Paris" width="400" height="400">
+          <p><strong>Dr. Maria O'connor (Surgical Oncologist)</strong></p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <a href="mailto:erikasecillano281@gmail.com">mariaoc@mail.com</a></br>
+          <button class="btn" data-toggle="modal" data-target="#myModal"><a href="http://localhost:5000/index">Chat </a></button>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="thumbnail">
+          <img src="{{url_for('static', filename='dr2.jpg')}}" alt="New York" width="400" height="400">
+          <p><strong>Dr. Katherine Jones (Gynocology Oncologist)</strong></p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <a href="mailto:erikasecillano281@gmail.com">katherinejo@mail.com</a></br>
+          <button class="btn" data-toggle="modal" data-target="#myModal"><a href="http://localhost:5000/index">Chat </a></button>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="thumbnail">
+          <img src="{{url_for('static', filename='dr1.jpg')}}" alt="San Francisco" width="400" height="400">
+          <p><strong>Dr. James Murphy (Hema Oncologist)</strong></p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <a href="mailto:erikasecillano281@gmail.com">jamesmu@mail.com</a></br>
+          <button class="btn" data-toggle="modal" data-target="#myModal"><a href="http://localhost:5000/index">Chat </a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+

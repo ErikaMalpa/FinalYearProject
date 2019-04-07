@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% if session.log  %}
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+  <div class="container">
+    <table border="1" cellpadding="5" cellspacing="20">
+    	<tr>
+    <th>Patient Number</th>
+    <th>Age</th>
+    <th>gender</th>
+    <th>Clinic address</th>
+    <th> Result </th>
+    <th> Download </th>
+  </tr>
+    {% for row in result %}
+            <tr>
+               <td>{{row["patient_number"]}}</td>
+               <td>{{row["age"]}}</td>
+               <td> {{ row["gender"]}}</td>
+               <td>{{row['clinic_address']}}</td>
+               <td> 3 </td>	
+               <td> <a href="return-file" target="blank"><button class='btn btn-default'>Download Result</button></a></td>
+            </tr>
+         {% endfor %}
+	</table>
+</div>
+
+{% else  %}
+<h1>You must log in</h1>
+{% endif  %}
+
+{% endblock %}

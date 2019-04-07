@@ -1,0 +1,11 @@
+Results
+patient_number : 125 
+age : 28 
+gender : Male 
+clinic_address : 123Address 
+The result is : 3 
+To learn more about prostate cancer : 
+https://www.cancer.ie/cancer-information/prostate-cancer/symptoms-and-diagnosis#sthash.9dLysnwC.rfBhTbRr.dpbs
+https://www.cancer.ie/cancer-information/prostate-cancer/treatment#sthash.qOxTlBMv.dpbs
+
+'Lung': 0,'Breast': 1,'Kidney': 2,'Prostate': 3,'Colon': 4
