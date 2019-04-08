@@ -10,7 +10,6 @@ from flask_wtf import FlaskForm
 from wtforms.fields import StringField, SubmitField
 from wtforms.validators import Required
 #####
-from sklearn.decomposition import PCA
 import csv
 import random
 import math
@@ -19,12 +18,12 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from matplotlib.colors import ListedColormap
-##import tensorflow as tf
 from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 import pylab as pl
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
+import tensorflow as tf
 #####
 engine = create_engine("mysql+pymysql://root:12ambionG@localhost/signup")
 engine2 = create_engine("mysql+pymysql://root:12ambionG@localhost/patient")
@@ -38,7 +37,8 @@ ALLOWED_EXTENSIONS = set(['txt', 'csv','soft'])
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
 #socketio wrapper for the app
-socketio = SocketIO(app,async_mode = 'eventlet')
+#socketio = SocketIO(app,async_mode = 'eventlet')
+socketio = SocketIO(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
@@ -156,8 +156,15 @@ def convertion_file():
             list = ['Platform_SEQUENCE','Gene title','Gene symbol','Gene ID','UniGene title','UniGene symbol','UniGene ID','Nucleotide Title','GI','GenBank Accession','Platform_CLONEID','Platform_ORF','Platform_SPOTID','Chromosome location','Chromosome annotation','GO:Function','GO:Process','GO:Component','GO:Function ID','GO:Process ID','GO:Component ID',]
             new_df = df[list]
             df = df.drop(columns=list)
+            df = df[df.IDENTIFIER != '--Control']
+
+            #transpose
+            df = df.transpose()
+            df['Class'] = '1'
             df2 = df.fillna(0)
             #df2 = df2.transpose()
+            #This is different from the main software as this is needed for it to work for flask
+            #The one in the original work
             df2 = df2.to_string()
             with open('upload/converted.txt', 'w') as f:
                 f.write(df2)
@@ -326,9 +333,6 @@ def upload_file2():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 predict = request.form
-                #with open('upload/file1.txt', 'w') as f: 
-                 #   f.write(predict)
-                #session["predict"] = True
 
                 ###
                 #read data
@@ -360,28 +364,11 @@ def upload_file2():
                 
                 clf5 = OneVsRestClassifier(LinearSVC(random_state=0)).fit(X_train, y_train)
                 lrTest = clf5.predict(X_test)
-
-                # df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',
-                #      engine='python')
-                # df2 = np.asarray(df2)
-
-                # df2 = clf.predict(df2)
+                
                 df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',engine='python')
                 df2 = df2.drop('Unnamed: 0', axis=1).values
                 df2 = np.asarray(df2)
                 df2 = clf5.predict(df2)
-                ####
-
-                ####
-                # patientID = request.form.get("patientID")
-                # clinicAddress = request.form.get("clinicAddress")
-
-                # patiedIDdata = db.execute("SELECT patientID FROM patientInformation WHERE username=:username",{"username":username}).fetchone()
-                # clinicAddressdata = db.execute("SELECT clinicAddress FROM patientInformation WHERE username=:username",{"username":username}).fetchone()
-                ####
-
-                ####
-
                 ####
                
                 return render_template('results.html',predict= predict,df2=df2)
@@ -389,35 +376,119 @@ def upload_file2():
         elif request.method == 'GET':
             return render_template('predictOVR.html')
 
+###################Predict DNN#####################
+
+@app.route('/predictDNN/')
+def predictDNN():
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        return render_template('predictDNN.html')
+
+@app.route('/predictDNN', methods=['GET', 'POST'])
+def upload_file3():
+    if not session.get('log'):
+        return redirect(url_for('login'))
+    else:
+        if request.method == 'POST':
+            
+
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                predict = request.form
+
+                #read the data
+                df = pd.read_csv('./upload/joinedData.csv', sep=r'\s*(?:\||\#|\,)\s*',
+                                 engine='python')
+
+                #change the classes to numbers
+                Class = {'LUAD': 0,'BRCA': 1,'KIRC': 2,'PRAD': 3,'COAD': 4} 
+                df.Class = [Class[item] for item in df.Class] 
+                df = df.drop('Unnamed: 0',1)
+                df = df.drop('Unnamed: 0.1',1)
+                df
+
+                #separate the data into X and y
+                X = df.drop('Class', axis=1).values
+                y = df['Class'].values
+                y = np.asarray(y)
+
+                #standardize the data
+                X = (X - X.mean()) / (X.max() - X.min())
+
+                #Split the data set to test and train
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)  
+                X_train
+
+                #get the estimator
+                estimator = tf.estimator.DNNClassifier(
+                    feature_columns=[tf.feature_column.numeric_column('x', shape=X_train.shape[1:])],
+                    hidden_units=[1000, 500, 250], 
+                    optimizer=tf.train.ProximalAdagradOptimizer(
+                      learning_rate=0.01,
+                      l1_regularization_strength=0.001
+                    ), #optimizer was used to improve the estimator
+                    n_classes=5) #the number of label classes, we have 5
+
+                # defining the training inputs
+                train = tf.estimator.inputs.numpy_input_fn(
+                    x={"x": X_train},
+                    y=y_train,
+                    batch_size=X_test.shape[0],
+                    num_epochs=None,
+                    shuffle=False,
+                    num_threads=1
+                    ) 
+
+
+                estimator.train(input_fn = train,steps=1000)
+
+                # defining the test inputs
+                input_fn2 = tf.estimator.inputs.numpy_input_fn(
+                    x={"x": X_test},
+                    y=y_test, 
+                    shuffle=False,
+                    batch_size=X_test.shape[0],
+                    num_epochs=None)
+
+                #evaluate the estimator
+                estimator.evaluate(input_fn2,steps=1000) 
+
+                #predict input
+                df2 = pd.read_csv('./upload/test.csv', sep=r'\s*(?:\||\#|\,)\s*',engine='python')
+                df2 = df2.drop('Unnamed: 0', axis=1).values
+                df2 = np.asarray(df2)
+
+                pred_input_fn = tf.estimator.inputs.numpy_input_fn(
+                    x={"x": df2},
+                    shuffle=False)
+
+                #predict the results
+                pred_results = estimator.predict(input_fn=pred_input_fn)
+               
+                return render_template('results.html',predict= predict,pred_results=pred_results)
+                
+        elif request.method == 'GET':
+            return render_template('predictDNN.html')
+
+######################################Predict DNN end########################################
+
 @app.route('/list')
 def list():
     # c.execute("SELECT * FROM patient")
     result = engine2.execute("select * from patient")
     return render_template('list.html', result = result)
-#def download():
- #   file = open('khan_train.csv','r')
-  #  returnfile = file.read().encode('latin-1')
-   # file.close()
-    #return Response(returnfile,
-     #   mimetype="text/csv",
-      #  headers={"Content-disposition":
-       #          "attachment; filename=khan_train.csv"})
-
-# @app.route('/')
-# def chat():
-#     if not session.get('log'):
-#         return redirect(url_for('login'))
-#     else:
-#         return render_template('chat.html')
-
-# def messageRecived():
-#   print( 'message was received!!!' )
-
-# #event for broadcasting message to everyone...
-# @socketio.on('my event')
-# def handle_my_custom_event( json ):
-#   print( 'recived my event: ' + str( json ) )
-#   socketio.emit( 'my response', json, callback=messageRecived,room=sid )
 
 #######
 @socketio.on('joined', namespace='/chat')
@@ -474,7 +545,4 @@ def chat():
     return render_template('chat.html', name=name, room=room)
 
 if __name__ == '__main__':
-    #app.secret_key="this0is1a2pass3word4"
-    #app.run(debug=True)
     socketio.run(app,debug = False, host='0.0.0.0',port=5000)
-    #socketio.run(host='0.0.0.0', debug = True, app)

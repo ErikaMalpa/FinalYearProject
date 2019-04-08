@@ -55,6 +55,11 @@
 
 }
 
+@media only screen and (min-width: 768px) {
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+}
   </style>
 
   {% if title %}
@@ -78,10 +83,15 @@
       <ul class="nav navbar-nav" style="background-color: #2A2639;">
         {% if session.log %}
         <li><a href="{{ url_for('main') }}">Home</a></li>
-        <li><a href="{{ url_for('predict') }}">Predict</a></li>
-        <!-- <li><a href="{{ url_for('predictOVR') }}">Predict2</a></li> -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Predict<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li ><a href="{{ url_for('predict') }}">Predict with KNN</a></li>
+            <li><a href="{{ url_for('predictOVR') }}">Predict with OVR</a></li>
+            <li><a href="{{ url_for('predictDNN') }}">Predict with DNN</a></li>
+          </ul>
+        </li>
         <li><a href="{{ url_for('convertion_file') }}">Convert</a></li>
-        <!-- <li><a href="{{ url_for('results') }}">Results</a></li> -->
         <li><a href="{{ url_for('list') }}">List</a></li>
         <li><a href="{{ url_for('directory') }}">Directory</a></li>
         <li><a href="http://localhost:5000/">Log Out</a></li>
@@ -149,22 +159,40 @@
 
 </div>
     <!-- Optional JavaScript -->
-    <script> $('#myCarousel').carousel();
-    var winWidth = $(window).innerWidth();
-    $(window).resize(function () {
+    <script> 
+      $('#myCarousel').carousel();
+        var winWidth = $(window).innerWidth();
+        $(window).resize(function () {
 
-        if ($(window).innerWidth() < winWidth) {
-            $('.carousel-inner>.item>img').css({
-                'min-width': winWidth, 'width': winWidth
-            });
+            if ($(window).innerWidth() < winWidth) {
+                $('.carousel-inner>.item>img').css({
+                    'min-width': winWidth, 'width': winWidth
+                });
+            }
+            else {
+                winWidth = $(window).innerWidth();
+                $('.carousel-inner>.item>img').css({
+                    'min-width': '', 'width': ''
+                });
+            }
+        });
+
+        $('.dropdown-toggle').click(function(e) {
+        if ($(document).width() > 768) {
+          e.preventDefault();
+
+          var url = $(this).attr('href');
+
+             
+          if (url !== '#') {
+          
+            window.location.href = url;
+          }
+
         }
-        else {
-            winWidth = $(window).innerWidth();
-            $('.carousel-inner>.item>img').css({
-                'min-width': '', 'width': ''
-            });
-        }
-    });</script>
+});
+
+    </script>
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <!-- https://pixabay.com/images/search/doctor/ images used -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

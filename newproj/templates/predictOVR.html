@@ -4,30 +4,28 @@
 {% block content %}
 
    <div class="container">
-     <h1>Predict OVR</h1>
+     <h1>Predict</h1>
      <p>Plase make sure that the file is only csv to be able to upload. Also double check that the patient number and clinic address is correct</p>
    
 
    <form action = "http://127.0.0.1:5000/predictOVR" method = "POST" enctype = "multipart/form-data">
     <legend>Personal information:</legend>
     <p>Patient number:</p>
-    <input type="text"placeholder="patientID" name="Patient Number" value="">
+    <input type="text"placeholder="patient_number" name="patient_number" value="125">
+    <p>Age:</p>
+    <input type="text"placeholder="age" name="age" value="28">
+    <p>Gender:</p>
+    <select name="gender">
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
     <p>Clinic Adress:</p>
-    <input type="text"placeholder="clinicAddress" name="Clinic Address" value="">
+    <input type="text"placeholder="clinic_address" name="clinic_address" value="123Address">
     <br><br>
          <input type = "file" name = "file" />
          <input type = "submit"/>
     </form>
-
-    <!-- <form action = "http://127.0.0.1:5000/predict" method = "POST" 
-    enctype = "multipart/form-data">
-    <legend>Predict:</legend>
-    <p>Consent to keep information for further research?</p>
-    <input type="radio" name="consent" value="yes"> Yes <br>
-    <input type="radio" name="consent" value="no"> No <br>
-        <input type = "submit"/>
-    </form>
-    </div> -->
+</div>
 
  {% endblock %}}
 {% else  %}
