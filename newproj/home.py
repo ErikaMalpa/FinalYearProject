@@ -332,7 +332,7 @@ def upload_file2():
                 df2 = df2.drop('Unnamed: 0', axis=1).values
                 df2 = np.asarray(df2)
 
-                with open('KNN.pkl','rb') as file:
+                with open('OVR.pkl','rb') as file:
                     mp = pickle.load(file)
 
                 ##predict

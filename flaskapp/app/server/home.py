@@ -101,12 +101,6 @@ def login():
                     return render_template("login.html")
     return render_template('login.html')
 
-#######Importing necessary#######
-import pylab as pl
-import numpy as np
-import pandas as pd
-#####################################
-
 @app.route('/convertion', methods=['GET', 'POST'])
 def convertion_file():
     if not session.get('log'):
