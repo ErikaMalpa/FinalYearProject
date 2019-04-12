@@ -4,26 +4,22 @@
 {% if session.log  %}
    <div class="container">
      <h1>Results</h1>
-    <!-- <table border = 1>
-       {% for key, value in predict.items() %}
-          <tr>
-             <th> {{ key }} </th>
-             <td> {{ value }} </td>
-          </tr>
-       {% endfor %}
-    </table> -->
+
     <form action = "http://127.0.0.1:5000/results" method = "GET" enctype = "multipart/form-data">
     <p>
+    <!--This prints the items that is -->
     {% for key, value in predict.items() %}
              <th> {{ key }} :</th> 
              <td> {{ value }} </td><br/>
     {% endfor %}
 
+    <!--This prints the results of the model -->
     {% for res in df2 %}
              <th> The result is :</th> 
              <td> {{ res }} </td><br/>
     {% endfor %}
 
+    <!--This prints the results of the model for DNN-->
     {% for res in pred_results %}
              <th> The result is :</th> 
              <td> {{ res }} </td><br/>
@@ -32,6 +28,7 @@
             <a href="https://www.cancer.ie/cancer-information/prostate-cancer/treatment#sthash.qOxTlBMv.dpbs">Treatment for prostate cancer</a><br/>
     {% endfor %}
 
+    <!--If the result of cancer prediction is 3 then it will print out the information about prostate since in the model 3 means prostate, else if 1 it will print out information about breast cancer since in the model 1 means breast cancer-->
     {% if df2 == 3 %}
         <th> To learn more about prostate cancer :</th> </br>
         <a href="https://www.cancer.ie/cancer-information/prostate-cancer/symptoms-and-diagnosis#sthash.9dLysnwC.dpbs">Symptoms and diagnosis of prostate cancer</a></br>

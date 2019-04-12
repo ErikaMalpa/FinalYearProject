@@ -9,32 +9,23 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */ 
     .navbar {
       margin-bottom: 0;
       border-radius: 0;
       background-color: #555;
       color: white;
     }
-    
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
     .row.content {height: 450px}
-    
-    /* Set gray background color and 100% height */
     .sidenav {
       padding-top: 20px;
       background-color: #f1f1f1;
       height: 100%;
     }
-    
-    /* Set black background color, white text and some padding */
     footer {
       background-color: #555;
       color: white;
       padding: 15px;
     }
-    
-    /* On small screens, set height to 'auto' for sidenav and grid */
     @media screen and (max-width: 767px) {
       .sidenav {
         height: auto;
@@ -81,6 +72,7 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav" style="background-color: #2A2639;">
+        <!--if logged in, this will be seen -->
         {% if session.log %}
         <li><a href="{{ url_for('main') }}">Home</a></li>
         <li class="dropdown">
@@ -96,6 +88,7 @@
         <li><a href="{{ url_for('directory') }}">Directory</a></li>
         <li><a href="http://localhost:5000/">Log Out</a></li>
         {% else %}
+        <!--if not looged in this will onlt be seen -->
         <li><a href="{{ url_for('directory') }}">Directory</a></li>
         <li><a href="http://localhost:5000/">Log Out</a></li>
         {% endif %}
@@ -160,6 +153,7 @@
 </div>
     <!-- Optional JavaScript -->
     <script> 
+      //This is the code for the carousel to be able to move
       $('#myCarousel').carousel();
         var winWidth = $(window).innerWidth();
         $(window).resize(function () {
@@ -177,6 +171,7 @@
             }
         });
 
+        //this is the code for the dropdown in predict
         $('.dropdown-toggle').click(function(e) {
         if ($(document).width() > 768) {
           e.preventDefault();

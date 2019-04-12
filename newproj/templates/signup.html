@@ -1,3 +1,5 @@
+
+<!--THis is the sign up html -->
 {% block body %}
  <style>
 
@@ -89,14 +91,18 @@ margin-top: 12px;
 <form action="" method="POST">
 <div class="signup-form">
 <div class="control-group">
-    <input type="text" class="form-control" value="" placeholder="email" name="email" pattern="[a-z0-9._%+-]+@gmail.[a-z]{2,}$" required>
+
+<!--Only @Genex mail is allowed when signing up-->
+<input type="text" class="form-control" value="" placeholder="email" name="email" pattern="[a-z0-9._%+-]+@genex.[a-z]{2,}$" required>
 <label class="signup-field-icon fui-user" for=signup-name"></label></div>
 <div class="control-group">
-        <input type="text" class="form-control" value="" placeholder="username" name="username" required>
-<label class="signup-field-icon fui-user" for=signup-name"></label></div>
+    <input type="text" class="form-control" value="" placeholder="username" name="username" required>
+	<label class="signup-field-icon fui-user" for=signup-name"></label></div>
+
+<!--Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 ({8,}) or more characters-->
 <div class="control-group">
-        <input type="password" class="form-control" value="" placeholder="password" name="password" id="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{3,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
- required>
+    <input type="password" class="form-control" value="" placeholder="password" name="password" id="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+required>
 <label class="signup-field-icon fui-user" for=signup-name"></label></div>
 
 <input type="submit" value="Sign Up" class="btn btn-primary btn-large btn-block">

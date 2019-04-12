@@ -4,19 +4,19 @@
 # import app
 # from flask import Flask
 
-# @pytest.mark.options(debug=False)
-# def test_app(app):
-#   assert not app.debug, 'Ensure the app not in debug mode'
-#
+# # @pytest.mark.options(debug=False)
+# # def test_app(app):
+# #   assert not app.debug, 'Ensure the app not in debug mode'
+
 # UPLOAD_FOLDER = 'upload'
 
 # @pytest.fixture
 # def app():
 #     app = Flask(__name__)
-#     app.config['SECRET_KEY'] = os.urandom(32)
-#     #socketio wrapper for the app
-#     socketio = SocketIO(app,async_mode = 'eventlet')
-#     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#     # app.config['SECRET_KEY'] = os.urandom(32)
+#     # #socketio wrapper for the app
+#     # socketio = SocketIO(app,async_mode = 'eventlet')
+#     # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #     return app
 
 
@@ -41,13 +41,28 @@
 #     response = client.get("/login")
 #     assert response.status_code == 404
 
-from flask import Flask
-from flask_testing import TestCase
+# from flask import Flask
+# from flask_testing import TestCase
 
-class MyTest(TestCase):
+# class MyTest(TestCase):
 
-    def create_app(self):
+#     def create_app(self):
 
-        app = Flask(__name__)
-        app.config['TESTING'] = True
-        return app
+#         app = Flask(__name__)
+#         app.config['TESTING'] = True
+#         return app
+
+import home
+import unittest
+
+
+class MyTestCase(unittest.TestCase):
+
+    def setUp(self):
+        my_app.app.testing = True
+        self.app = my_app.app.test_client()
+
+    def test_home(self):
+        result = self.app.get('/')
+        # Make your assertions
+        assert response.status_code == 200

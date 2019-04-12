@@ -7,19 +7,27 @@
         <script type="text/javascript" charset="utf-8">
             var socket;
             $(document).ready(function(){
+                //Connect to the localhost/chat
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+
+                //socket connects and emits the enter socket route
                 socket.on('connect', function() {
-                    socket.emit('joined', {});
+                    socket.emit('enter', {});
                 });
+
+                //FOr the status when a user enters or leave the chat, a mesage will appear
                 socket.on('status', function(data) {
                     $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
+
+                //For when the user types in a message it will be able to be sent
                 socket.on('message', function(data) {
                     $('#chat').val($('#chat').val() + data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
                 $('#text').keypress(function(e) {
+                    //activates when the enter key is pressed
                     var code = e.keyCode || e.which;
                     if (code == 13) {
                         text = $('#text').val();
@@ -28,8 +36,9 @@
                     }
                 });
             });
+            //function to leave the room
             function leave_room() {
-                socket.emit('left', {}, function() {
+                socket.emit('leave', {}, function() {
                     socket.disconnect();
 
                     // go back to the directory
@@ -39,6 +48,7 @@
         </script>
     </head>
     <body>
+        <!--TThe html code for the chat -->
         <div class="container">
         <h1>Consultation chat: {{ room }}</h1>
         <textarea id="chat" cols="80" rows="10"></textarea><br><br>

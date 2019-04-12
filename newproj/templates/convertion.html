@@ -7,17 +7,12 @@
      <h1>Convert .soft files</h1>
      <p>Plase make sure that the file is only .soft file to be able to upload.</p>
    
-
+<!--This is the form needed for the convertion -->
    <form action = "http://127.0.0.1:5000/convertion" method = "POST" enctype = "multipart/form-data">
     <legend>File Upload:</legend>
          <input type = "file" name = "file" />
          <input type = "submit"/>
     </form>
-<!-- 
-    <form action = "http://127.0.0.1:5000/convertion" method = "GET" enctype = "multipart/form-data">
-    <legend>File Download:</legend>
-         <a target="blank"><button class='btn btn-default'>Download!</button></a>
-    </form> -->
 </div>
 
 {% endblock %}}

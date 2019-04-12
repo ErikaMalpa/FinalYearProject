@@ -3,9 +3,12 @@
 {% block content %}
 <div class="container">
 <form method="POST">
+	<!--This is the index of the chat, the name and room is needed to be inputted here -->
             {{ FlaskForm.hidden_tag() }}
+            <!--Name and room needed -->
             {{ FlaskForm.name.label }}: {{ FlaskForm.name() }} {% for error in FlaskForm.name.errors %}{{ error }}{% endfor %}
             {{ FlaskForm.room.label }}: {{ FlaskForm.room() }} {% for error in FlaskForm.room.errors %}{{ error }}{% endfor %}
+            <!--Submission -->
             {{ FlaskForm.submit() }}
 </form>
 </div>

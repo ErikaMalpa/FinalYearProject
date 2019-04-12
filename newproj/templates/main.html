@@ -1,4 +1,5 @@
-
+<!--This loads the layout.html -->
+<!--This is the page loaded when localhost:5000 is loaded, log in, sign up and guest user are the selection -->
 {% block body %}
 
 <style>
@@ -58,16 +59,18 @@ color: #777;
  
         <div class="jumbotron">
             <div class="app-title">
-    <h1>Gene Expression Cancer Predcitor</h1>
+    <h1>Gene-Ex</h1>
 	</div>
             <p class="lead"></p>
             <div class="control-group">
+                <!--Log in and sign up-->
 			<a href="{{ url_for('login') }}"><input type="submit" value="Log in" class="btn btn-primary btn-large btn-block"></a>
 			<label class="login-field-icon fui-lock" for="login-pass"></label></div>
 			<div class="control-group">
 			<a href="{{ url_for('signup') }}"><input type="submit" value="Sign up" class="btn btn-primary btn-large btn-block"></a>
 			<label class="login-field-icon fui-lock" for="login-pass"></label></div>
 
+            <!--Button for guest user -->
             <div class="control-group">
             <a href="{{ url_for('directory') }}"><input type="submit" value="Guest User" class="btn btn-primary btn-large btn-block"></a>
             <label class="login-field-icon fui-lock" for="login-pass"></label></div>

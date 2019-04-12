@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+<!--This is the html for the list where the patients information are outputted here-->
 {% block content %}
 {% if session.log  %}
 <head>
@@ -31,6 +31,7 @@ tr:nth-child(even) {
     <th> Result </th>
     <th> Download </th>
   </tr>
+  <!--THis enables the files to be downloaded-->
     {% for row in result %}
             <tr>
                <td>{{row["patient_number"]}}</td>

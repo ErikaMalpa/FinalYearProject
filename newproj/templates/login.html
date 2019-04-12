@@ -1,4 +1,4 @@
-
+<!--THis is the login html -->
 {% block body %}
  <style>
 
@@ -90,6 +90,7 @@ margin-top: 12px;
 </div>
 <form action="" method-="POST">
 <div class="login-form">
+<!-- Log in form for existing user -->
 <div class="control-group">
         <input type="text" class="login-field" value="" placeholder="username" name="username">
 <label class="login-field-icon fui-user" for="login-name"></label></div>
@@ -105,6 +106,7 @@ margin-top: 12px;
 </div>
 </form>
 
+<!-- Guest User login  -->
 <div class="control-group">
 <a href="{{ url_for('directory') }}"><input type="submit" value="Guest User" class="btn btn-primary btn-large btn-block"></a>
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
